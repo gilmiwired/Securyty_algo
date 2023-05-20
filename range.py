@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
 
 # CSVファイルからデータを読み込む
 data = pd.read_csv("aditional_result.csv")
@@ -41,15 +40,16 @@ plt.tight_layout()
 # グラフをPNGファイルとして保存
 plt.savefig("comparison_plot2.png")
 
-# 各評価指標の最大値と最小値の範囲を計算してDataFrameに保存
-range_data = []
+# グラフを画面に表示
+plt.show()
+
+# 各評価指標の最大値と最小値の範囲を出力
 for metric in metrics:
-    max_values = data.groupby('algorithm')[metric].idxmax()
-    min_values = data.groupby('algorithm')[metric].idxmin()
+    # 各アルゴリズムの最大値と最小値を計算
+    max_values = data.groupby('algorithm')[metric].max()
+    min_values = data.groupby('algorithm')[metric].min()
+
+    # 各アルゴリズムごとに範囲を表示
+    print(f"\nRange of {metric.capitalize()} for each Algorithm:")
     for algorithm in max_values.index:
-        range_data.append([algorithm, metric, data.loc[min_values[algorithm], 'dataset'], data.loc[max_values[algorithm], 'dataset']])
-
-range_df = pd.DataFrame(range_data, columns=["algorithm", "metric", "min_dataset", "max_dataset"])
-
-# 結果をCSVファイルに出力
-range_df.to_csv("algorithm_ranges_datasets.csv", index=False)
+        print(f"{algorithm}: {min_values[algorithm]} ~ {max_values[algorithm]}")
